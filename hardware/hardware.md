@@ -39,3 +39,9 @@
 Since this is a simple perf-board, I used [DIYLC](https://bancika.github.io/diy-layout-creator/) to plan the layout. It's committed here as [DoorLedStrip.diy](./DoorLedStrip.diy). Ideally, I'd be able to export it as an image that shows the front side with traces hidden and the back side with wires and custom shapes hidden, as well as components visible as outlines only. To keep it easily readable in a repo, I'm just adding a screenshot of the front side with traces and wires on the back set to half-transparent.
 
 ![DoorLedStrip_front.png](./DoorLedStrip_front.png)
+
+## Pinout on ESP32
+
+- GPIO16 - LED signal
+- GPIO22 - I2C SCL
+- GPIO21 - I2C SDA
