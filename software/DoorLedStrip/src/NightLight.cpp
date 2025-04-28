@@ -10,7 +10,7 @@ bool areLightsOff(){
 void NightLightTask( void * parameter) {
   for(;;) {
     int lux = lightMeter.readLightLevel();
-    Serial.printf("Lux: %d\n", lux);
+    //Serial.printf("Lux: %d\n", lux);
     if (areLightsOff()) {
       if (lux > _settings.nightLight.luxThreshold) {
         pixel.set(Pixel::RGB(0, 0, 0, 0), LED_NPIXELS);
