@@ -9,34 +9,52 @@
 #include "Pixel.h"
 #include "CurrentMonitor.h"
 #include "HomeSpanLightBulb.h"
-#include "WebServer.h"
+#include "API.h"
 
+void statusUpdate(HS_STATUS status)
+{
+  Serial.printf("\n*** HOMESPAN STATUS CHANGE: %s\n", homeSpan.statusString(status));
+  if (status == HS_STATUS::HS_PAIRED)
+  {
+    Serial.println("[INFO] HomeSpan is ready.");
+    setupWebServer();
+  }
+}
 
-bool systemReady = false;
-
-
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   Serial.println("Starting DoorLedStrip");
   Wire.begin(I2C_SDA, I2C_SCL);
   loadPreferences();
   lightMeterInit();
- 
-  homeSpan.begin(Category::Lighting,"DoorLedStrip","DoorLedStrip","v0.1"); // TODO: move to proper values
-  SPAN_ACCESSORY();
-  SPAN_ACCESSORY("DoorLedStrip White");
-    BulbW = new NeoPixel_W(); 
-  SPAN_ACCESSORY("DoorLedStrip RGB");
-    BulbRGB = new NeoPixel_RGB();
-  xTaskCreate(NightLightTask,"NightLightTask",10000,NULL,1,&NightLightTaskHandle);
+  currentMonitorInit();
+  homeSpan.setStatusCallback(statusUpdate);
+  homeSpan.setPortNum(PORT_HS);
+  homeSpan.begin(Category::Bridges, "DoorLedStrip", "DLS", "DoorLedStrip"); // TODO: move to proper values
 
+  new SpanAccessory();
+  new Service::AccessoryInformation();
+  new Characteristic::Identify();
 
-  delay(500); 
+  new SpanAccessory();
+  new Service::AccessoryInformation();
+  new Characteristic::Identify();
+  new Characteristic::Name("DoorLedStrip White");
+  BulbW = new NeoPixel_W();
+
+  new SpanAccessory();
+  new Service::AccessoryInformation();
+  new Characteristic::Identify();
+  new Characteristic::Name("DoorLedStrip RGB");
+  BulbRGB = new NeoPixel_RGB();
+
+  xTaskCreate(NightLightTask, "NightLightTask", 10000, NULL, 1, &NightLightTaskHandle);
+
+  delay(500);
 }
-void loop() {
+
+void loop()
+{
   homeSpan.poll();
-  if (!systemReady && WiFi.status() == WL_CONNECTED) {
-    systemReady = true;
-    setupWebServer();  // if you have one
-  }
 }

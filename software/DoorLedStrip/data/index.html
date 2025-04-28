@@ -1,1 +1,282 @@
-<h1>DoorLedStrip</h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DoorLedStrip</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      body,
+      input,
+      button {
+        font-family: monospace;
+      }
+      td {
+        text-align: right;
+      }
+      .presetButton {
+        width: 100px;
+        height: 100px;
+        font-size: 18px;
+        color: black;
+        padding: 10px;
+        border: 1px solid black;
+      }
+      .bold {
+        font-weight: bold;
+      }
+      button {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DoorLedStrip</h1>
+    <table border="1" id="parent">
+      <tr>
+        <td id="led_RGB">---</td>
+        <td class="bold" id="led_Wbrightness">---</td>
+      </tr>
+      <tr>
+        <td>
+          <table border="1" id="ledState">
+            <tbody>
+              <tr style="color: red">
+                <td>Rred</td>
+                <td id="led_R">---</td>
+              </tr>
+              <tr style="color: green">
+                <td>Green</td>
+                <td id="led_G">---</td>
+              </tr>
+              <tr style="color: blue">
+                <td>Blue</td>
+                <td id="led_B">---</td>
+              </tr>
+              <tr>
+                <td>White</td>
+                <td id="led_W">---</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+        <td>
+          <table border="1" id="sensorState">
+            <tbody>
+              <tr class="bold">
+                <td>Ambient</td>
+                <td id="light">---</td>
+              </tr>
+              <tr class="bold">
+                <td>Current</td>
+                <td id="current_mA">---</td>
+              </tr>
+              <tr>
+                <td>Voltage</td>
+                <td id="current_mV">---</td>
+              </tr>
+              <tr>
+                <td>Power</td>
+                <td id="current_mW">---</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <br />
+    <hr />
+    <h2>Set Color</h2>
+
+    <button
+      class="presetButton"
+      style="background: #ff0000"
+      onclick="setPreset(255,0,0,0)"
+    >
+      Red
+    </button>
+    <button
+      class="presetButton"
+      style="background: #ff00ff"
+      onclick="setPreset(255,0,255,0)"
+    >
+      Magenta
+    </button>
+    <button
+      class="presetButton"
+      style="background: #ffff00"
+      onclick="setPreset(255,255,0,0)"
+    >
+      Yellow
+    </button>
+    <br />
+    <br />
+    <button
+      class="presetButton"
+      style="background: #00ff00"
+      onclick="setPreset(0,255,0,0)"
+    >
+      Green
+    </button>
+    <button
+      class="presetButton"
+      style="background: #0000ff"
+      onclick="setPreset(0,0,255,0)"
+    >
+      Blue
+    </button>
+    <button
+      class="presetButton"
+      style="background: #00ffff"
+      onclick="setPreset(0,255,255,0)"
+    >
+      Cyan
+    </button>
+    <br />
+    <br />
+    <button
+      class="presetButton"
+      style="background: #000000; color: white"
+      onclick="setPreset(0,0,0,0)"
+    >
+      OFF
+    </button>
+    <button
+      class="presetButton"
+      style="background: #ffffff"
+      onclick="setPreset(0,0,0,128)"
+    >
+      W 50%
+    </button>
+    <button
+      class="presetButton"
+      style="background: #ffffff"
+      onclick="setPreset(0,0,0,255)"
+    >
+      W FULL
+    </button>
+    <br />
+    <br />
+
+    <!-- TODO: render color from current values -->
+    <form id="colorForm" method="POST" action="/api/setColor">
+      <table border="1">
+        <tr>
+          <td style="color: red">
+            R: <input type="number" name="r" min="0" max="255" required />
+          </td>
+          <td style="color: green">
+            G: <input type="number" name="g" min="0" max="255" required />
+          </td>
+          <td style="color: blue">
+            B: <input type="number" name="b" min="0" max="255" required />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            W: <input type="number" name="w" min="0" max="255" required />
+          </td>
+          <td colspan="2">
+            <button type="submit">Set Color</button>
+          </td>
+        </tr>
+      </table>
+
+      <script>
+        function setPreset(r, g, b, w) {
+          const form = document.getElementById("colorForm");
+          form.r.value = r;
+          form.g.value = g;
+          form.b.value = b;
+          form.w.value = w;
+          form.submit();
+        }
+      </script>
+    </form>
+
+    <br />
+    <br />
+    <a href="/settings.html">Settings</a><br /><br />
+
+    <script>
+      async function fetchState() {
+        try {
+          const response = await fetch("/api/state.json");
+          if (!response.ok) {
+            throw new Error("Network response was not OK");
+          }
+          const data = await response.json();
+          renderTables(data);
+        } catch (error) {
+          console.error("Failed to fetch state:", error);
+        }
+      }
+
+      function renderTables(state) {
+        document
+          .getElementById("colorForm")
+          .querySelector('input[name="r"]').value = state.led.r;
+        document
+          .getElementById("colorForm")
+          .querySelector('input[name="g"]').value = state.led.g;
+        document
+          .getElementById("colorForm")
+          .querySelector('input[name="b"]').value = state.led.b;
+        document
+          .getElementById("colorForm")
+          .querySelector('input[name="w"]').value = state.led.w;
+        document
+          .getElementById("parent")
+          .querySelector("#led_RGB").textContent = "    ";
+        document
+          .getElementById("parent")
+          .querySelector(
+            "#led_RGB"
+          ).style.backgroundColor = `rgb(${state.led.r}, ${state.led.g}, ${state.led.b})`;
+        document
+          .getElementById("ledState")
+          .querySelector("#led_R").textContent = String(state.led.r).padStart(
+          3,
+          "0"
+        );
+        document
+          .getElementById("ledState")
+          .querySelector("#led_G").textContent = String(state.led.g).padStart(
+          3,
+          "0"
+        );
+        document
+          .getElementById("ledState")
+          .querySelector("#led_B").textContent = String(state.led.b).padStart(
+          3,
+          "0"
+        );
+        document
+          .getElementById("parent")
+          .querySelector("#led_Wbrightness").innerHTML =
+          "White: " + parseInt(state.led.w / 255) + "%";
+        document.getElementById("ledState").querySelector("#led_W").innerHTML =
+          String(state.led.w).padStart(3, "0");
+        document
+          .getElementById("sensorState")
+          .querySelector("#light").textContent =
+          String(state.light).padStart(4, " ") + " lx";
+        document
+          .getElementById("sensorState")
+          .querySelector("#current_mA").textContent =
+          String(state.current.mA).padStart(4, " ") + " mA";
+        document
+          .getElementById("sensorState")
+          .querySelector("#current_mV").textContent =
+          String(state.current.mV).padStart(4, " ") + " mV";
+        document
+          .getElementById("sensorState")
+          .querySelector("#current_mW").textContent =
+          String(state.current.mW).padStart(4, " ") + " mW";
+      }
+
+      fetchState();
+    </script>
+  </body>
+</html>

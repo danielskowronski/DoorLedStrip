@@ -3,16 +3,20 @@
 #include <Preferences.h>
 
 #define MAGIC_NUMBER 0xDEADBEEF
-#define DEFAULT_LUX_THRESHOLD 100
+#define DEFAULT_LUX_THRESHOLD_ON 50
+#define DEFAULT_LUX_THRESHOLD_OFF 100
 #define DEFAULT_TARGET_BRIGHTNESS 32
 
 extern Preferences _flashPreferences;
 
-struct NightLightSettings {
-  uint16_t luxThreshold;
+struct NightLightSettings
+{
+  uint16_t thresholdOn;
+  uint16_t thresholdOff;
   uint8_t targetBrightness;
 };
-struct Settings {
+struct Settings
+{
   uint32_t magicNumber;
   NightLightSettings nightLight;
 };

@@ -3,7 +3,8 @@
 #include "hardware.h"
 #include <Adafruit_INA219.h>
 
-struct CurrentMonitorReadings {
+struct CurrentMonitorReadings
+{
   uint16_t mA;
   uint16_t mV;
   uint16_t mW;

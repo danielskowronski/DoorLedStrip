@@ -10,3 +10,6 @@
 
 #define I2C_SDA 21
 #define I2C_SCL 22
+
+#define PORT_API 8080
+#define PORT_HS 80

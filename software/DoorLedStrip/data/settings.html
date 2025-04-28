@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DoorLedStrip</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body,
+      input,
+      button {
+        font-family: monospace;
+      }
+      td {
+        text-align: right;
+      }
+      button {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Setttings</h1>
+    <h2>Configure Night Light</h2>
+
+    <form method="POST" action="/api/setNight" id="nightForm">
+      <table border="1">
+        <tr>
+          <td>Threshold On</td>
+          <td>
+            <input
+              type="number"
+              name="thresholdOn"
+              min="0"
+              max="65535"
+              required
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>Threshold Off</td>
+          <td>
+            <input
+              type="number"
+              name="thresholdOff"
+              min="0"
+              max="65535"
+              required
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>Target Brightness</td>
+          <td>
+            <input
+              type="number"
+              name="targetBrightness"
+              min="0"
+              max="255"
+              required
+            />
+          </td>
+        </tr>
+      </table>
+      <button type="submit">Save Night Settings</button>
+    </form>
+
+    <script>
+      async function fetchState() {
+        try {
+          const response = await fetch("/api/state.json");
+          if (!response.ok) {
+            throw new Error("Network response was not OK");
+          }
+          const data = await response.json();
+          document
+            .getElementById("nightForm")
+            .querySelector('input[name="thresholdOn"]').value =
+            data.night.thresholdOn;
+          document
+            .getElementById("nightForm")
+            .querySelector('input[name="thresholdOff"]').value =
+            data.night.thresholdOff;
+          document
+            .getElementById("nightForm")
+            .querySelector('input[name="targetBrightness"]').value =
+            data.night.targetBrightness;
+        } catch (error) {
+          console.error("Failed to fetch state:", error);
+        }
+      }
+      fetchState();
+    </script>
+  </body>
+</html>

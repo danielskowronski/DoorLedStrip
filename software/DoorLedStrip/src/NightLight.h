@@ -5,4 +5,4 @@
 
 extern TaskHandle_t NightLightTaskHandle;
 bool areLightsOff();
-void NightLightTask( void * parameter);
+void NightLightTask(void *parameter);

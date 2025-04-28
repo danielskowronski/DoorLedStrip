@@ -1,6 +1,7 @@
 #pragma once
 #include "Arduino.h"
+#include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
-extern AsyncWebServer server;
+extern AsyncWebServer *API_SERVER;
 void setupWebServer();

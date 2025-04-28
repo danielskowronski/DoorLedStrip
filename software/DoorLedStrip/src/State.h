@@ -6,19 +6,22 @@
 #include "State.h"
 #include "CurrentMonitor.h"
 
-struct LEDState {
+struct LEDState
+{
   uint8_t r;
   uint8_t g;
   uint8_t b;
   uint8_t w;
 };
-struct State {
+struct State
+{
   LEDState led;
+  uint16_t AmbientLight;
   NightLightSettings night;
   CurrentMonitorReadings current;
 };
 
-extern Pixel::Color colorRGB; 
+extern Pixel::Color colorRGB;
 extern Pixel::Color colorWC;
 
 State getState();
