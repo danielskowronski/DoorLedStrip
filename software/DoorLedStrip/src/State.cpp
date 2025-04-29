@@ -5,6 +5,7 @@ Pixel::Color colorWC;
 
 State getState()
 {
+  // FIXME: this ignores NightLight :(
   State state;
   state.led.r = colorRGB.col[0];
   state.led.g = colorRGB.col[1];

@@ -10,6 +10,7 @@
 #include "CurrentMonitor.h"
 #include "HomeSpanLightBulb.h"
 #include "API.h"
+#include "OvercurrentWatchdog.h"
 
 void statusUpdate(HS_STATUS status)
 {
@@ -49,8 +50,12 @@ void setup()
   new Characteristic::Name("DoorLedStrip RGB");
   BulbRGB = new NeoPixel_RGB();
 
+  Serial.println("Installing NightLightTask");
   xTaskCreate(NightLightTask, "NightLightTask", 10000, NULL, 1, &NightLightTaskHandle);
+  Serial.println("Installing OvercurrentWatchdogTask");
+  xTaskCreate(OvercurrentWatchdogTask, "OvercurrentWatchdogTask", 10000, NULL, 0, &OvercurrentWatchdogTaskHandle);
 
+  Serial.println("Final sleep before loop");
   delay(500);
 }
 
@@ -58,3 +63,5 @@ void loop()
 {
   homeSpan.poll();
 }
+
+// TODO: use HomeSpan log decorators and fix output
