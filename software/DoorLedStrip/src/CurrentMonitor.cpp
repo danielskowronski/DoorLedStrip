@@ -1,4 +1,5 @@
 #include "CurrentMonitor.h"
+#include "MQTT.h"
 
 Adafruit_INA219 ina219;
 TaskHandle_t CurrentMonitorTaskHandle;
@@ -6,7 +7,7 @@ bool currentMonitorInit()
 {
   bool initStatus = ina219.begin();
   Serial.printf("[currentMonitorInit] ina219.begin() status: %d\n", initStatus);
-  ina219.setCalibration_32V_2A();
+  ina219.setCalibration_32V_2A(); // ???
   return initStatus;
 }
 CurrentMonitorReadings currentMonitorRead()

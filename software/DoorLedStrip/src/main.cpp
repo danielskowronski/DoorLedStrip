@@ -19,6 +19,7 @@ void statusUpdate(HS_STATUS status)
   {
     Serial.println("[INFO] HomeSpan is ready.");
     setupWebServer();
+    mqttInit();
   }
 }
 

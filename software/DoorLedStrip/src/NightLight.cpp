@@ -3,6 +3,7 @@
 #include "LightMeter.h"
 #include "Pixel.h"
 #include "HomeSpan.h"
+#include "MQTT.h"
 
 TaskHandle_t NightLightTaskHandle;
 
@@ -16,6 +17,7 @@ void NightLightTask(void *parameter)
   for (;;)
   {
     int lux = lightMeter.readLightLevel();
+    mqttPublishLightSensor(lux);
     // Serial.printf("Lux: %d\n", lux);
     if (areLightsOff())
     {

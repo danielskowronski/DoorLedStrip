@@ -64,6 +64,70 @@
       <button type="submit">Save Night Settings</button>
     </form>
 
+    <h2>Configure MQTT</h2>
+
+    <form method="POST" action="/api/setMQTT" id="mqttForm">
+      <table border="1">
+        <tr>
+          <td>Enabled</td>
+          <td>
+            <input type="checkbox" name="enabled" required />
+          </td>
+        </tr>
+        <tr>
+          <td>Publish frequency</td>
+          <td>
+            <input
+              type="number"
+              name="publishFrequency"
+              min="1"
+              max="65535"
+              required
+            />
+            seconds
+          </td>
+        </tr>
+        <tr>
+          <td>Server</td>
+          <td>
+            <input type="text" name="server" length="256" required />
+          </td>
+        </tr>
+        <tr>
+          <td>Port</td>
+          <td>
+            <input type="number" name="port" min="0" max="65535" required />
+          </td>
+        </tr>
+        <tr>
+          <td>Topic</td>
+          <td>
+            <input type="text" name="topic" length="256" required />
+          </td>
+        </tr>
+        <tr>
+          <td>User</td>
+          <td>
+            <input type="text" name="user" length="256" />
+          </td>
+        </tr>
+        <tr>
+          <td>Password</td>
+          <td>
+            <input type="text" name="password" length="256" />
+            <br />
+            <input
+              type="checkbox"
+              name="passwordChange"
+              defaultChecked="false"
+            />
+            Change password
+          </td>
+        </tr>
+      </table>
+      <button type="submit">Save MQTT Settings</button>
+    </form>
+
     <script>
       async function fetchState() {
         try {
@@ -88,7 +152,38 @@
           console.error("Failed to fetch state:", error);
         }
       }
+      async function fetchMqtt() {
+        try {
+          const response = await fetch("/api/mqtt.json");
+          if (!response.ok) {
+            throw new Error("Network response was not OK");
+          }
+          const data = await response.json();
+          document
+            .getElementById("mqttForm")
+            .querySelector('input[name="enabled"]').checked = data.enabled;
+          document
+            .getElementById("mqttForm")
+            .querySelector('input[name="publishFrequency"]').value =
+            data.publishFrequency;
+          document
+            .getElementById("mqttForm")
+            .querySelector('input[name="server"]').value = data.server;
+          document
+            .getElementById("mqttForm")
+            .querySelector('input[name="port"]').value = data.port;
+          document
+            .getElementById("mqttForm")
+            .querySelector('input[name="topic"]').value = data.topic;
+          document
+            .getElementById("mqttForm")
+            .querySelector('input[name="user"]').value = data.user;
+        } catch (error) {
+          console.error("Failed to fetch state:", error);
+        }
+      }
       fetchState();
+      fetchMqtt();
     </script>
   </body>
 </html>

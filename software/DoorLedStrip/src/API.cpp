@@ -11,7 +11,7 @@ AsyncWebServer *API_SERVER = nullptr;
 
 String stateToJSON(const State &state)
 {
-  StaticJsonDocument<256> doc;
+  JsonDocument doc;
   doc["led"]["r"] = state.led.r;
   doc["led"]["g"] = state.led.g;
   doc["led"]["b"] = state.led.b;
@@ -26,6 +26,22 @@ String stateToJSON(const State &state)
 
   String json;
   serializeJson(doc, json);
+  return json;
+}
+String mqttToJSON()
+{
+  JsonDocument doc;
+  doc["enabled"] = _settings.mqttCredentials.enabled;
+  doc["publishFrequency"] = _settings.mqttCredentials.publishFrequency;
+  doc["server"] = _settings.mqttCredentials.server;
+  doc["port"] = _settings.mqttCredentials.port;
+  doc["topic"] = _settings.mqttCredentials.topic;
+  doc["user"] = _settings.mqttCredentials.user;
+
+  String json;
+  serializeJson(doc, json);
+
+
   return json;
 }
 void setupWebServer()
@@ -46,6 +62,11 @@ void setupWebServer()
   API_SERVER->on("/api/state.json", HTTP_GET, [](AsyncWebServerRequest *request)
                  {
     String json = stateToJSON(getState());
+    request->send(200, "application/json", json); });
+
+  API_SERVER->on("/api/mqtt.json", HTTP_GET, [](AsyncWebServerRequest *request)
+                 {
+    String json = mqttToJSON();
     request->send(200, "application/json", json); });
 
   API_SERVER->on("/api/setColor", HTTP_POST, [](AsyncWebServerRequest *request)
@@ -109,6 +130,32 @@ void setupWebServer()
     _settings.nightLight.thresholdOff = thresholdOff;
     _settings.nightLight.targetBrightness = targetBrightness;
     savePreferences();
+  
+    request->redirect("/settings.html"); });
+
+  API_SERVER->on("/api/setMQTT", HTTP_POST, [](AsyncWebServerRequest *request)
+                 {
+    bool enabled = request->arg("enabled") == "on";
+    uint32_t publishFrequency = request->arg("publishFrequency").toInt();
+    String server = request->arg("server");
+    uint16_t port = request->arg("port").toInt();
+    String topic = request->arg("topic");
+    String user = request->arg("user");
+    String password = request->arg("password");
+    bool passwordChange = request->arg("passwordChange") == "on";
+    
+    _settings.mqttCredentials.enabled = enabled;
+    _settings.mqttCredentials.publishFrequency = publishFrequency;
+    server.toCharArray(_settings.mqttCredentials.server, MAX_STR_LEN+1);
+    _settings.mqttCredentials.port = port;
+    topic.toCharArray(_settings.mqttCredentials.topic, MAX_STR_LEN+1);
+    user.toCharArray(_settings.mqttCredentials.user, MAX_STR_LEN+1);
+    if (passwordChange) {
+      password.toCharArray(_settings.mqttCredentials.password, MAX_STR_LEN+1);
+    } 
+
+    savePreferences();
+    mqttInit();
   
     request->redirect("/settings.html"); });
 

@@ -6,7 +6,7 @@
 
 struct CurrentMonitorReadings
 {
-  uint16_t mA;
+  int16_t mA;
   uint16_t mV;
   uint16_t mW;
 };

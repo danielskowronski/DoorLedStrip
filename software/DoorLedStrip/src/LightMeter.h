@@ -1,6 +1,7 @@
 #pragma once
 #include "Arduino.h"
 #include "hardware.h"
+#include "MQTT.h"
 
 #include <Wire.h>
 #include <BH1750.h>
