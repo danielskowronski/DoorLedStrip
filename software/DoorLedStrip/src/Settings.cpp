@@ -16,9 +16,9 @@ void loadPreferences()
 {
   _flashPreferences.begin("settings", true);
   size_t size = _flashPreferences.getBytesLength("settings");
-  if (size == sizeof(_flashPreferences))
+  if (size == sizeof(_settings))
   {
-    _flashPreferences.getBytes("settings", &_flashPreferences, sizeof(_flashPreferences));
+    _flashPreferences.getBytes("settings", &_settings, sizeof(_settings));
     _flashPreferences.end();
   }
   else
